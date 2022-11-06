@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:note_making_app/screens/forgot_password_screen.dart';
 import 'package:note_making_app/screens/signup_screen.dart';
-import 'package:note_making_app/widgets/round_button.dart';
+import '../utils/utils.dart';
+import '../widgets/custom_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +19,36 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isVisible = true;
   bool showPassword = true;
   final _formKey = GlobalKey<FormState>();
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  bool loading = false;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
+  void login() {
+    setState(() {
+      loading = true;
+    });
+    _auth
+        .signInWithEmailAndPassword(
+            email: emailController.text.toString(),
+            password: passwordController.text.toString())
+        .then((value) {
+      setState(() {
+        loading = false;
+      });
+      Utils().toastMessage("valid ${emailController.text.toString()} user");
+    }).onError((error, stackTrace) {
+      setState(() {
+        loading = false;
+      });
+      Utils().toastMessage(error.toString());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               Form(
+                autovalidateMode: AutovalidateMode.always,
                 key: _formKey,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -107,17 +141,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgotPassword()),
+                        );
+                      },
                       child: const Text("Forget Password"),
                     ),
                     ButtonElevated(
-                        title: "Login",
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            debugPrint("Ok");
-                          }
-                        },
-                        loading: false),
+                      title: "Login",
+                      loading: loading,
+                      onTap: () {
+                        login();
+                      },
+                    ),
                   ],
                 ),
               ),

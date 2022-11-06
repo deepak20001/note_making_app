@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:note_making_app/widgets/round_button.dart';
-
+import 'package:note_making_app/utils/utils.dart';
+import '../widgets/custom_button.dart';
 import 'login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -18,6 +19,39 @@ class _SignupScreenState extends State<SignupScreen> {
   bool isVisible = true;
   bool showPassword = true;
   final _formKey = GlobalKey<FormState>();
+  bool loading = false;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
+  void Signup() {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        loading = true;
+      });
+      _auth
+          .createUserWithEmailAndPassword(
+        email: emailController.text.toString(),
+        password: passwordController.text.toString(),
+      )
+          .then((value) {
+        setState(() {
+          loading = false;
+        });
+        Utils().toastMessage("Successfully created your account");
+      }).onError((error, stackTrace) {
+        Utils().toastMessage(error.toString());
+        setState(() {
+          loading = false;
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +62,7 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               const SizedBox(height: 50),
               SvgPicture.asset(
-                'images/login_img.svg',
+                'images/signup_img.svg',
                 height: 250.0,
                 // width: 200.0,
                 allowDrawingOutsideViewBox: true,
@@ -125,18 +159,13 @@ class _SignupScreenState extends State<SignupScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // TextButton(
-                    //   onPressed: () {},
-                    //   child: const Text("Forget Password"),
-                    // ),
                     ButtonElevated(
-                        title: "Sign Up",
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            debugPrint("Ok");
-                          }
-                        },
-                        loading: false),
+                      title: "Sign Up",
+                      loading: loading,
+                      onTap: () {
+                        Signup();
+                      },
+                    ),
                   ],
                 ),
               ),
