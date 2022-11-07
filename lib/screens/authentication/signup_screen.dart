@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:note_making_app/utils/utils.dart';
-import '../widgets/custom_button.dart';
+import '../../widgets/custom_button.dart';
 import 'login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
