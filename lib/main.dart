@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:note_making_app/screens/authentication/login_screen.dart';
-import 'package:note_making_app/screens/authentication/signup_screen.dart';
+import '../screens/authentication/login_screen.dart';
 import 'package:note_making_app/screens/notes_screen.dart';
 
 void main() async {
@@ -21,8 +21,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepPurple,
         // colorScheme: ColorScheme.dark(),
       ),
-      home: const NotesScreen(),
-      // home: const LoginScreen(),
+      // home: const NotesScrgeen(),
+      home: FirebaseAuth.instance.currentUser != null
+          ? const NotesScreen()
+          : const LoginScreen(),
     );
   }
 }
