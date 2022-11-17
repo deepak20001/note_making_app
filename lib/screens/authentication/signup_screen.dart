@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:note_making_app/utils/utils.dart';
-import '../widgets/custom_button.dart';
+import '../../widgets/custom_button.dart';
+import '../notes_screen.dart';
 import 'login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -27,6 +28,7 @@ class _SignupScreenState extends State<SignupScreen> {
     // TODO: implement dispose
     emailController.dispose();
     passwordController.dispose();
+    super.dispose();
   }
 
   void Signup() {
@@ -43,6 +45,12 @@ class _SignupScreenState extends State<SignupScreen> {
         setState(() {
           loading = false;
         });
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NotesScreen(),
+          ),
+        );
         Utils().toastMessage("Successfully created your account");
       }).onError((error, stackTrace) {
         Utils().toastMessage(error.toString());

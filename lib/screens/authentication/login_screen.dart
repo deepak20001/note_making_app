@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:note_making_app/screens/forgot_password_screen.dart';
-import 'package:note_making_app/screens/signup_screen.dart';
-import '../utils/utils.dart';
-import '../widgets/custom_button.dart';
+import '../authentication/forgot_password_screen.dart';
+import '../authentication/signup_screen.dart';
+import '../../utils/utils.dart';
+import '../../widgets/custom_button.dart';
+import '../notes_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isVisible = true;
   bool showPassword = true;
   final _formKey = GlobalKey<FormState>();
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool loading = false;
 
   @override
@@ -30,9 +31,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login() {
-    setState(() {
-      loading = true;
-    });
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        loading = true;
+      });
+    }
     _auth
         .signInWithEmailAndPassword(
             email: emailController.text.toString(),
@@ -42,6 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
         loading = false;
       });
       Utils().toastMessage("valid ${emailController.text.toString()} user");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const NotesScreen(),
+        ),
+      );
     }).onError((error, stackTrace) {
       setState(() {
         loading = false;
@@ -60,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 90),
               SvgPicture.asset(
                 'images/login_img.svg',
-                height: 250.0,
+                height: 200.0,
                 // width: 200.0,
                 allowDrawingOutsideViewBox: true,
               ),
