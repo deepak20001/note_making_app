@@ -16,7 +16,10 @@ class NotesScreen extends StatefulWidget {
 }
 
 class _NotesScreenState extends State<NotesScreen> {
-  final firestore = FirebaseFirestore.instance.collection("notes").snapshots();
+  final firestore = FirebaseFirestore.instance
+      .collection("notes")
+      .where('user_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .snapshots();
   CollectionReference ref = FirebaseFirestore.instance.collection("notes");
 
   @override
@@ -73,6 +76,9 @@ class _NotesScreenState extends State<NotesScreen> {
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2),
                       children: deepak.data!.docs
+                          // .where((e) =>
+                          //     e.get(FirebaseAuth.instance.currentUser!.uid) ==
+                          //     FirebaseFirestore.instance.collection("notes").id)
                           .map((e) => noteCard(() {
                                 Navigator.push(
                                   context,

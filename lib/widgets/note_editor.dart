@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:note_making_app/utils/utils.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NoteEditorScreen extends StatefulWidget {
   const NoteEditorScreen({super.key});
@@ -21,6 +22,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     // TODO: implement dispose
     _titleController.dispose();
     _contetController.dispose();
+    super.dispose();
   }
 
   @override
@@ -93,6 +95,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
               _loading = true;
             });
             FirebaseFirestore.instance.collection("notes").add({
+              "user_id": FirebaseAuth.instance.currentUser!.uid,
               "note_title": _titleController.text,
               "creation_date": date,
               "note_content": _contetController.text,
